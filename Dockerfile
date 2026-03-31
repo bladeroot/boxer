@@ -1,12 +1,10 @@
 FROM ubuntu:24.04
 
-ARG USERNAME=$(whoami)
-ARG HOST_UID=$(id -u)
-ARG HOST_GID=$(id -g)
+ARG USERNAME
+ARG HOST_UID
+ARG HOST_GID
 
-RUN echo $USERNAME
-
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bash curl wget git build-essential \
     python3 python3-pip nodejs npm fish neovim git-lfs \
     sudo iputils-ping iptables iproute2 gosu \
@@ -16,6 +14,13 @@ RUN apt-get update && apt-get install -y \
     net-tools dnsutils strace lsof \
     ripgrep fd-find fzf bat \
     man-db file \
+    software-properties-common \
+    && add-apt-repository -y ppa:deadsnakes/ppa \
+    && apt-get update && apt-get install -y --no-install-recommends \
+    python3.10 python3.10-venv python3.10-distutils \
+    && python3.10 -m ensurepip --upgrade \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get autoremove --purge -y
